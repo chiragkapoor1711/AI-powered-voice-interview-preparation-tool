@@ -18,7 +18,6 @@
 - **Voice Input:** Web Speech API + `SpeechRecognition`  
 - **Text-to-Speech:** `gTTS`  
 - **Audio Processing:** `pydub`  
-- **Server Deployment:** Render  
 - **Version Control:** Git & GitHub
 
 ---
