@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AI Voice Interview - Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+ 
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #080c1f 0%, #9329ff 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: #333;
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+      color: white;
+    }
+    
+    .header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    .header p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+    
+    .start-section {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    #makeInterviewBtn {
+      padding: 15px 30px;
+      background: linear-gradient(45deg, #00c6ff, #0072ff);
+      border: none;
+      color: white;
+      border-radius: 50px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 8px 25px rgba(0,114,255,0.3);
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    #makeInterviewBtn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 35px rgba(0,114,255,0.4);
+    }
+    
+    #interviewContainer {
+      display: none;
+      max-width: 1200px;
+      margin: 0 auto;
+      gap: 20px;
+    }
+    
+    @media (min-width: 768px) {
+      #interviewContainer {
+        display: none;
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    
+    .interview-box {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 25px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      height: 500px;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .box-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+    
+    .box-header h3 {
+      font-size: 1.3rem;
+      margin-left: 10px;
+      color: #333;
+    }
+    
+    .box-header .emoji {
+      font-size: 1.5rem;
+    }
+    
+    .messages-container {
+      flex: 1;
+      overflow-y: auto;
+      margin-bottom: 20px;
+      scrollbar-width: thin;
+      scrollbar-color: #cbd5e0 #f7fafc;
+    }
+    
+    .messages-container::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    .messages-container::-webkit-scrollbar-track {
+      background: #f7fafc;
+      border-radius: 3px;
+    }
+    
+    .messages-container::-webkit-scrollbar-thumb {
+      background: #cbd5e0;
+      border-radius: 3px;
+    }
+    
+    .message {
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 15px;
+      animation: slideIn 0.3s ease;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .user-message {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      margin-left: 20px;
+      border-bottom-right-radius: 5px;
+    }
+    
+    .ai-message {
+      background: linear-gradient(135deg, #f093fb, #f5576c);
+      color: white;
+      margin-right: 20px;
+      border-bottom-left-radius: 5px;
+    }
+    
+    .controls-section {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    
+    .button-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    
+    .btn {
+      padding: 12px 20px;
+      border: none;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    }
+    
+    #recordBtn {
+      background: linear-gradient(45deg, #56ab2f, #a8e6cf);
+      color: white;
+      flex: 1;
+      min-width: 150px;
+    }
+    
+    #recordBtn.recording {
+      background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+      animation: pulse 1.5s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+    
+    #resetBtn {
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      color: white;
+    }
+    
+    #summaryBtn {
+      background: linear-gradient(45deg, #ffecd2, #fcb69f);
+      color: #333;
+      display: none;
+    }
+    
+    .status-container {
+      background: rgba(255,255,255,0.8);
+      border-radius: 12px;
+      padding: 15px;
+      text-align: center;
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255,255,255,0.3);
+    }
+    
+    #statusIndicator {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      transition: all 0.3s ease;
+    }
+    
+    .status-ready { color: #28a745; }
+    .status-recording { color: #dc3545; }
+    .status-processing { color: #ffc107; }
+    .status-speaking { color: #007bff; }
+    
+    .volume-indicator {
+      width: 100%;
+      height: 8px;
+      background: rgba(255,255,255,0.3);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+    
+    .volume-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #4caf50, #ffeb3b, #f44336);
+      width: 0%;
+      transition: width 0.1s ease;
+      border-radius: 4px;
+    }
+    
+    .interview-type-selector {
+      display: none;
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 20px;
+      margin: 20px auto;
+      max-width: 500px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    
+    .interview-type-selector h3 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+    
+    .type-buttons {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 10px;
+    }
+    
+    .type-btn {
+      padding: 12px 20px;
+      background: linear-gradient(45deg, #080c1f, #9329ff);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    
+    .type-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    
+    .loading-spinner {
+      display: none;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #f3f3f3;
+      border-top: 2px solid #3498db;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .progress-indicator {
+      margin-top: 15px;
+    }
+    
+    .progress-text {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 5px;
+    }
+    
+    .progress-bar {
+      width: 100%;
+      height: 4px;
+      background: rgba(255,255,255,0.3);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #667eea, #764ba2);
+      width: 0%;
+      transition: width 0.3s ease;
+      border-radius: 2px;
+    }
+    
+    /* Mobile responsiveness */
+    @media (max-width: 767px) {
+      body {
+        padding: 10px;
+      }
+      
+      .header h1 {
+        font-size: 2rem;
+      }
+      
+      #interviewContainer {
+        display: none;
+        flex-direction: column;
+      }
+      
+      .interview-box {
+        height: auto;
+        min-height: 300px;
+        margin-bottom: 20px;
+      }
+      
+      .button-row {
+        flex-direction: column;
+      }
+      
+      .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+     <h1>🎙️ <span style="color:#ffce54;">VocaView</span> – AI Voice Interview Prep</h1>
+  <p style="font-size:1.1rem; opacity:0.9;">
+    Speak. Learn. Ace the Interview.
+  </p>
+  </div>
+  <div style="position: absolute; top: 20px; right: 30px;">
+  <form action="/logout" method="POST">
+    <button type="submit" style="
+      padding: 10px 20px;
+      background: linear-gradient(45deg, #ff416c, #ff4b2b);
+      color: white;
+      border: none;
+      border-radius: 20px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    ">🔓 Logout</button>
+  </form>
+</div>
+
+
+<div id="technicalSection" class="category-section" style="margin-bottom: 40px;">
+<h2 style="text-align: left; color: white; margin: 0 auto 20px auto; max-width: 900px; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);">💻 Technical Roles</h2>
+
+  <div class="role-selection-section" id="roleCards" style="display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); max-width: 900px; margin: 0 auto;">
+    
+    <div class="role-card" data-type="frontend" style="padding: 20px; background: #fff; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); text-align: center;">
+      <div style="font-size: 2rem;">🌐</div>
+      <h3>Frontend</h3>
+      <p>Questions on HTML, CSS, JS, React</p>
+      <button class="type-btn" style="margin-top: 10px;" data-type="frontend">Start</button>
+    </div>
+
+    <div class="role-card" data-type="backend" style="padding: 20px; background: #fff; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); text-align: center;">
+      <div style="font-size: 2rem;">⚙️</div>
+      <h3>Backend</h3>
+      <p>Focus on APIs, DB, Python, Node.js</p>
+      <button class="type-btn" style="margin-top: 10px;" data-type="backend">Start</button>
+    </div>
+
+    <div class="role-card" data-type="data-analyst" style="padding: 20px; background: #fff; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); text-align: center;">
+      <div style="font-size: 2rem;">📊</div>
+      <h3>Data Analyst</h3>
+      <p>SQL, Excel, Data Visualization</p>
+      <button class="type-btn" style="margin-top: 10px;" data-type="data-analyst">Start</button>
+    </div>
+
+    <div class="role-card" data-type="uiux" style="padding: 20px; background: #fff; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); text-align: center;">
+      <div style="font-size: 2rem;">🎨</div>
+      <h3>UI/UX Designer</h3>
+      <p>Wireframes, Design Thinking, Prototyping</p>
+      <button class="type-btn" style="margin-top: 10px;" data-type="uiux">Start</button>
+    </div>
+
+    <div class="role-card" data-type="general" style="padding: 20px; background: #fff; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); text-align: center;">
+      <div style="font-size: 2rem;">💼</div>
+      <h3>General</h3>
+      <p>HR and behavioral questions</p>
+      <button class="type-btn" style="margin-top: 10px;" data-type="general">Start</button>
+    </div>
+
+    <div class="role-card" data-type="software-developer" style="padding: 20px; background: #fff; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); text-align: center;">
+      <div style="font-size: 2rem;">👨‍💻</div>
+      <h3>Software Developer</h3>
+      <p>OOP, Debugging, Design Patterns</p>
+      <button class="type-btn" style="margin-top: 10px;" data-type="software-developer">Start</button>
+    </div>
+
+    <div class="role-card" data-type="data-scientist" style="padding: 20px; background: #fff; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); text-align: center;">
+      <div style="font-size: 2rem;">📈</div>
+      <h3>Data Scientist</h3>
+      <p>ML, Data Cleaning, Python Tools</p>
+      <button class="type-btn" style="margin-top: 10px;" data-type="data-scientist">Start</button>
+    </div>
+
+    <div class="role-card" data-type="cybersecurity" style="padding: 20px; background: #fff; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); text-align: center;">
+      <div style="font-size: 2rem;">🛡️</div>
+      <h3>Cybersecurity</h3>
+      <p>Threats, Encryption, Testing</p>
+      <button class="type-btn" style="margin-top: 10px;" data-type="cybersecurity">Start</button>
+    </div>
+
+    <div class="role-card" data-type="web-developer" style="padding: 20px; background: #fff; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); text-align: center;">
+      <div style="font-size: 2rem;">🌐</div>
+      <h3>Web Developer</h3>
+      <p>HTML, CSS, JS, APIs</p>
+      <button class="type-btn" style="margin-top: 10px;" data-type="web-developer">Start</button>
+    </div>
+
+    <div class="role-card" data-type="system-admin" style="padding: 20px; background: #fff; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); text-align: center;">
+      <div style="font-size: 2rem;">🖥️</div>
+      <h3>System Admin</h3>
+      <p>Servers, Network, Monitoring</p>
+      <button class="type-btn" style="margin-top: 10px;" data-type="system-admin">Start</button>
+    </div>
+
+    <div class="role-card" data-type="product-manager" style="padding: 20px; background: #fff; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); text-align: center;">
+      <div style="font-size: 2rem;">📋</div>
+      <h3>Product Manager</h3>
+      <p>Roadmap, Feedback, Success Metrics</p>
+      <button class="type-btn" style="margin-top: 10px;" data-type="product-manager">Start</button>
+    </div>
+</div>
+<div id="businessSection" class="category-section" style="margin-bottom: 40px;">
+ <h2 style="text-align: left; color: white; margin: 0 auto 20px auto; max-width: 900px; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);">📊 Business / Corporate Roles</h2>
+
+  <div class="role-selection-section" style="display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); max-width: 900px; margin: 0 auto;">
+
+    <div class="role-card" data-type="management-trainee" style="padding: 20px; background: #fff; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); text-align: center;">
+      <div style="font-size: 2rem;">🧑‍🏫</div>
+      <h3>Management Trainee</h3>
+      <p>Training, Projects, Operations</p>
+      <button class="type-btn" style="margin-top: 10px;" data-type="management-trainee">Start</button>
+    </div>
+
+    <div class="role-card" data-type="sales-executive" style="padding: 20px; background: #fff; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); text-align: center;">
+      <div style="font-size: 2rem;">📞</div>
+      <h3>Sales Executive</h3>
+      <p>Targets, Lead Gen, CRM</p>
+      <button class="type-btn" style="margin-top: 10px;" data-type="sales-executive">Start</button>
+    </div>
+
+    <div class="role-card" data-type="marketing-manager" style="padding: 20px; background: #fff; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); text-align: center;">
+      <div style="font-size: 2rem;">📣</div>
+      <h3>Marketing Manager</h3>
+      <p>Campaigns, Branding, SEO</p>
+      <button class="type-btn" style="margin-top: 10px;" data-type="marketing-manager">Start</button>
+    </div>
+
+    <div class="role-card" data-type="business-analyst" style="padding: 20px; background: #fff; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); text-align: center;">
+      <div style="font-size: 2rem;">📊</div>
+      <h3>Business Analyst</h3>
+      <p>Insights, KPIs, Process Models</p>
+      <button class="type-btn" style="margin-top: 10px;" data-type="business-analyst">Start</button>
+    </div>
+
+    <div class="role-card" data-type="consultant" style="padding: 20px; background: #fff; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); text-align: center;">
+      <div style="font-size: 2rem;">💼</div>
+      <h3>Consultant</h3>
+      <p>Strategy, Solutions, Delivery</p>
+      <button class="type-btn" style="margin-top: 10px;" data-type="consultant">Start</button>
+    </div>
+
+    <div class="role-card" data-type="hr" style="padding: 20px; background: #fff; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); text-align: center;">
+      <div style="font-size: 2rem;">🧑‍💼</div>
+      <h3>HR</h3>
+      <p>Recruitment, Onboarding, Employee Care</p>
+      <button class="type-btn" style="margin-top: 10px;" data-type="hr">Start</button>
+    </div>
+
+  </div>
+</div>
+
+</div>
+
+</div>
+
+
+  <div class="interview-type-selector" id="typeSelector">
+    <h3>Choose Your Interview Focus</h3>
+    <div class="type-buttons">
+      <button class="type-btn" data-type="frontend">🌐 Frontend</button>
+      <button class="type-btn" data-type="backend">⚙️ Backend</button>
+      <button class="type-btn" data-type="data-analyst">📊 Data Analyst</button>
+      <button class="type-btn" data-type="general">💼 General</button>
+    </div>
+  </div>
+
+  <!-- Interview Section -->
+  <div id="interviewContainer">
+    <div class="interview-box">
+      <div class="box-header">
+        <span class="emoji">🤖</span>
+        <h3>AI Interviewer</h3>
+      </div>
+      <div class="messages-container" id="aiMessages">
+        <div class="message ai-message">Welcome! I'm your AI interviewer. Ready to help you ace your next interview!</div>
+      </div>
+    </div>
+    
+    <div class="interview-box">
+      <div class="box-header">
+        <span class="emoji">🧑‍💼</span>
+        <h3>Your Responses</h3>
+      </div>
+      <div class="messages-container" id="userMessages">
+        <div class="message user-message">Waiting for your response...</div>
+      </div>
+      
+      <div class="controls-section">
+        <div class="button-row">
+          <button id="recordBtn" class="btn">🎤 Start Recording</button>
+          <button id="resetBtn" class="btn">🔄 Reset</button>
+          <button id="summaryBtn" class="btn">📋 Summary</button>
+        </div>
+        
+        <div class="status-container">
+          <div id="statusIndicator" class="status-ready">Ready to start your interview</div>
+          <div class="loading-spinner" id="loadingSpinner"></div>
+          <div class="volume-indicator">
+            <div class="volume-bar" id="volumeBar"></div>
+          </div>
+          <div class="progress-indicator">
+            <div class="progress-text" id="progressText"></div>
+            <div class="progress-bar">
+              <div class="progress-fill" id="progressFill"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+   // Enhanced interview dashboard with improved UX
+class InterviewDashboard {
+  constructor() {
+    this.initializeElements();
+    this.initializeRecording();
+    this.bindEvents();
+    this.interviewStarted = false;
+    this.questionCount = 0;
+    this.maxQuestions = 5;
+  }
+
+  initializeElements() {
+    this.makeInterviewBtn = document.getElementById('makeInterviewBtn');
+    this.typeSelector = document.getElementById('typeSelector');
+    this.container = document.getElementById('interviewContainer');
+    this.aiMessages = document.getElementById('aiMessages');
+    this.userMessages = document.getElementById('userMessages');
+    this.recordBtn = document.getElementById('recordBtn');
+    this.resetBtn = document.getElementById('resetBtn');
+    this.summaryBtn = document.getElementById('summaryBtn');
+    this.statusIndicator = document.getElementById('statusIndicator');
+    this.volumeBar = document.getElementById('volumeBar');
+    this.loadingSpinner = document.getElementById('loadingSpinner');
+    this.progressText = document.getElementById('progressText');
+    this.progressFill = document.getElementById('progressFill');
+  }
+
+  initializeRecording() {
+    this.mediaRecorder = null;
+    this.audioChunks = [];
+    this.isRecording = false;
+    this.recordingTimer = null;
+    this.silenceTimer = null;
+    this.audioContext = null;
+    this.analyser = null;
+    this.dataArray = null;
+    this.animationFrame = null;
+    
+    // Recording settings
+    this.silenceThreshold = 0.01;
+    this.maxRecordingTime = 120000; // 2 minutes
+    this.silenceDetectionTime = 3000; // 3 seconds
+    this.minRecordingTime = 1000; // 1 second minimum
+  }
+
+ bindEvents() {
+const makeInterviewBtn = document.getElementById('makeInterviewBtn');
+if (makeInterviewBtn) {
+  makeInterviewBtn.onclick = () => this.showTypeSelector();
+}
+
+  // ✅ Bind visible "Start" buttons inside .role-card
+  document.querySelectorAll('.role-card .type-btn').forEach(btn => {
+    btn.onclick = () => this.startInterview(btn.dataset.type);
+  });
+
+  // ✅ (Optional) If you're keeping #typeSelector (hidden section)
+  document.querySelectorAll('#typeSelector .type-btn').forEach(btn => {
+    btn.onclick = () => this.startInterview(btn.dataset.type);
+  });
+
+  this.recordBtn.onclick = () => this.toggleRecording();
+  this.resetBtn.onclick = () => this.resetInterview();
+  this.summaryBtn.onclick = () => this.viewSummary();
+}
+
+  showTypeSelector() {
+    this.typeSelector.style.display = 'block';
+    this.makeInterviewBtn.style.display = 'none';
+  }
+
+  // ✅ Updated: Now properly sends role to server
+async startInterview(type) {
+  // ✅ Hide type selector (if visible)
+  this.typeSelector.style.display = 'none';
+
+  // ✅ Hide individual role card container if present
+  const roleCards = document.getElementById('roleCards');
+  if (roleCards) roleCards.style.display = 'none';
+
+  // ✅ Hide full technical + business sections
+  const technicalSection = document.getElementById('technicalSection');
+  const businessSection = document.getElementById('businessSection');
+  if (technicalSection) technicalSection.style.display = 'none';
+  if (businessSection) businessSection.style.display = 'none';
+
+  // ✅ Show the AI/User interview panel
+  this.container.style.display = window.innerWidth >= 768 ? 'grid' : 'flex';
+
+  // ✅ Set interview state
+  this.interviewStarted = true;
+  this.questionCount = 0;
+  this.selectedType = type;
+
+  this.updateStatus('Setting up interview...', 'processing');
+  this.updateProgress(0);
+
+  try {
+    const response = await fetch('/set_role', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ role: type })
+    });
+
+    const data = await response.json();
+
+    if (data.error) {
+      this.updateStatus(`Error: ${data.error}`, 'ready');
+      return;
+    }
+
+    this.aiMessages.innerHTML = '';
+    this.userMessages.innerHTML = '<div class="message user-message">Ready for interview...</div>';
+
+    this.addAIMessage(data.ai_reply);
+    this.speakAI(data.ai_reply);
+
+    setTimeout(() => {
+      this.updateStatus('Ready to record your answer', 'ready');
+    }, 3000);
+
+  } catch (error) {
+    console.error('Error setting up interview:', error);
+    this.updateStatus('Error setting up interview. Please try again.', 'ready');
+  }
+}
+
+  updateStatus(message, type) {
+    this.statusIndicator.textContent = message;
+    this.statusIndicator.className = `status-${type}`;
+    
+    if (type === 'processing') {
+      this.loadingSpinner.style.display = 'block';
+    } else {
+      this.loadingSpinner.style.display = 'none';
+    }
+  }
+
+  updateProgress(percentage) {
+    this.progressFill.style.width = percentage + '%';
+    this.progressText.textContent = `Progress: ${Math.round(percentage)}%`;
+  }
+
+  addAIMessage(text) {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'message ai-message';
+    messageDiv.innerHTML = `<strong>AI:</strong> ${text}`;
+    this.aiMessages.appendChild(messageDiv);
+    this.aiMessages.scrollTop = this.aiMessages.scrollHeight;
+  }
+
+  addUserMessage(text) {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'message user-message';
+    messageDiv.innerHTML = `<strong>You:</strong> ${text}`;
+    this.userMessages.appendChild(messageDiv);
+    this.userMessages.scrollTop = this.userMessages.scrollHeight;
+  }
+
+  speakAI(text) {
+    if ('speechSynthesis' in window) {
+      // Stop any ongoing speech first
+      window.speechSynthesis.cancel();
+      
+      // Wait a bit for voices to load
+      const speakText = () => {
+        const utterance = new SpeechSynthesisUtterance(text);
+        const voices = window.speechSynthesis.getVoices();
+        
+        // Select a specific female voice or fallback
+        let selectedVoice = voices.find(v => 
+          v.name.includes("Microsoft Zira") || 
+          v.name.includes("Google UK English Female") ||
+          (v.lang.includes("en") && v.name.toLowerCase().includes("female"))
+        );
+        
+        // If no female voice found, use first English voice
+        if (!selectedVoice) {
+          selectedVoice = voices.find(v => v.lang.includes("en-US") || v.lang.includes("en"));
+        }
+        
+        if (selectedVoice) {
+          utterance.voice = selectedVoice;
+        }
+        
+        utterance.rate = 0.8;
+        utterance.pitch = 1.1;
+        utterance.volume = 1;
+        
+        // Only set status after speech is complete, don't auto-progress
+        utterance.onend = () => {
+          console.log('AI speech completed');
+        };
+        
+        utterance.onerror = (event) => {
+          console.error('Speech synthesis error:', event);
+        };
+        
+        window.speechSynthesis.speak(utterance);
+      };
+      
+      // If voices aren't loaded yet, wait for them
+      if (window.speechSynthesis.getVoices().length === 0) {
+        window.speechSynthesis.onvoiceschanged = () => {
+          speakText();
+        };
+      } else {
+        speakText();
+      }
+    }
+  }
+
+  toggleRecording() {
+    if (this.isRecording) {
+      this.stopRecording();
+    } else {
+      this.startRecording();
+    }
+  }
+
+  async startRecording() {
+    if (this.isRecording) return;
+    
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true,
+          sampleRate: 44100
+        } 
+      });
+      
+      this.setupAudioContext(stream);
+      this.setupMediaRecorder(stream);
+      
+      this.mediaRecorder.start();
+      this.isRecording = true;
+      this.recordingStartTime = Date.now();
+      
+      this.updateUI(true);
+      this.startMonitoring();
+      
+    } catch (error) {
+      console.error('Error accessing microphone:', error);
+      this.updateStatus('Error: Could not access microphone', 'ready');
+    }
+  }
+
+  setupAudioContext(stream) {
+    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const source = this.audioContext.createMediaStreamSource(stream);
+    this.analyser = this.audioContext.createAnalyser();
+    this.analyser.fftSize = 256;
+    source.connect(this.analyser);
+    this.dataArray = new Uint8Array(this.analyser.frequencyBinCount);
+  }
+
+  setupMediaRecorder(stream) {
+    this.mediaRecorder = new MediaRecorder(stream, {
+      mimeType: 'audio/webm;codecs=opus'
+    });
+    
+    this.audioChunks = [];
+    
+    this.mediaRecorder.ondataavailable = (event) => {
+      if (event.data.size > 0) {
+        this.audioChunks.push(event.data);
+      }
+    };
+    
+    this.mediaRecorder.onstop = () => {
+      const recordingDuration = Date.now() - this.recordingStartTime;
+      
+      if (recordingDuration < this.minRecordingTime) {
+        this.updateStatus('Recording too short. Please try again.', 'ready');
+        this.cleanup();
+        return;
+      }
+      
+      const audioBlob = new Blob(this.audioChunks, { type: 'audio/webm' });
+      this.sendAudio(audioBlob);
+      this.cleanup();
+    };
+  }
+
+  updateUI(recording) {
+    if (recording) {
+      this.recordBtn.textContent = '🛑 Stop Recording';
+      this.recordBtn.classList.add('recording');
+      this.updateStatus('Recording... Speak clearly', 'recording');
+    } else {
+      this.recordBtn.textContent = '🎤 Start Recording';
+      this.recordBtn.classList.remove('recording');
+      this.volumeBar.style.width = '0%';
+    }
+  }
+
+  startMonitoring() {
+    this.monitorAudio();
+    
+    this.recordingTimer = setTimeout(() => {
+      if (this.isRecording) {
+        this.stopRecording();
+        this.updateStatus('Recording stopped (2 min limit)', 'processing');
+      }
+    }, this.maxRecordingTime);
+  }
+
+  monitorAudio() {
+    if (!this.isRecording || !this.analyser) return;
+    
+    this.analyser.getByteFrequencyData(this.dataArray);
+    
+    let sum = 0;
+    for (let i = 0; i < this.dataArray.length; i++) {
+      sum += this.dataArray[i];
+    }
+    let average = sum / this.dataArray.length / 255;
+    
+    this.volumeBar.style.width = (average * 100) + '%';
+    
+    if (average > this.silenceThreshold) {
+      if (this.silenceTimer) {
+        clearTimeout(this.silenceTimer);
+        this.silenceTimer = null;
+      }
+      this.updateStatus('Recording... You are speaking', 'speaking');
+    } else {
+      if (!this.silenceTimer) {
+        this.silenceTimer = setTimeout(() => {
+          if (this.isRecording) {
+            this.stopRecording();
+            this.updateStatus('Recording stopped (silence detected)', 'processing');
+          }
+        }, this.silenceDetectionTime);
+      }
+    }
+    
+    if (this.isRecording) {
+      this.animationFrame = requestAnimationFrame(() => this.monitorAudio());
+    }
+  }
+
+  stopRecording() {
+    if (!this.isRecording) return;
+    
+    this.isRecording = false;
+    this.clearTimers();
+    
+    if (this.mediaRecorder && this.mediaRecorder.state !== 'inactive') {
+      this.mediaRecorder.stop();
+    }
+    
+    this.updateUI(false);
+    this.updateStatus('Processing your audio...', 'processing');
+  }
+
+  clearTimers() {
+    if (this.recordingTimer) {
+      clearTimeout(this.recordingTimer);
+      this.recordingTimer = null;
+    }
+    if (this.silenceTimer) {
+      clearTimeout(this.silenceTimer);
+      this.silenceTimer = null;
+    }
+    if (this.animationFrame) {
+      cancelAnimationFrame(this.animationFrame);
+      this.animationFrame = null;
+    }
+  }
+
+  cleanup() {
+    if (this.audioContext) {
+      this.audioContext.close();
+      this.audioContext = null;
+    }
+  }
+
+  async sendAudio(audioBlob) {
+    const formData = new FormData();
+    formData.append('audio', audioBlob, 'recording.webm');
+    
+    try {
+      this.updateStatus('Processing your answer...', 'processing');
+      
+      const response = await fetch('/process_audio', {
+        method: 'POST',
+        body: formData
+      });
+      
+      const data = await response.json();
+      
+      if (data.error) {
+        this.updateStatus(`Error: ${data.error}`, 'ready');
+        return;
+      }
+      
+      // Add user's transcript
+      if (data.transcript) {
+        this.addUserMessage(data.transcript);
+      }
+      
+      // Add and speak AI response
+      if (data.ai_reply) {
+        this.addAIMessage(data.ai_reply);
+        
+        // Stop any existing speech before starting new one
+        window.speechSynthesis.cancel();
+        
+        // Small delay then speak AI response
+        setTimeout(() => {
+          this.speakAI(data.ai_reply);
+        }, 500);
+      }
+      
+      this.questionCount++;
+
+let progress = (this.questionCount / this.maxQuestions) * 100;
+
+// ✅ Force full progress bar if interview is done
+if (data.done || this.questionCount >= this.maxQuestions) {
+  this.updateProgress(100); // ✅ Force bar to 100%
+  this.updateStatus('Interview completed! View your summary.', 'ready');
+  this.summaryBtn.style.display = 'inline-block';
+} else {
+  this.updateProgress(progress); // ✅ Normal update if not done
+  setTimeout(() => {
+    this.updateStatus('Ready for next question - Click record when ready', 'ready');
+  }, 2000);
+}
+
+      
+    } catch (error) {
+      console.error('Error sending audio:', error);
+      this.updateStatus('Error processing audio. Please try again.', 'ready');
+    }
+  }
+
+async resetInterview() {
+  if (this.isRecording) this.stopRecording();
+
+  try {
+    await fetch('/reset_interview');
+
+    this.aiMessages.innerHTML = '<div class="message ai-message">Interview reset! Choose your interview type to start fresh.</div>';
+    this.userMessages.innerHTML = '<div class="message user-message">Ready for new interview...</div>';
+
+    this.updateStatus('Interview reset', 'ready');
+    this.summaryBtn.style.display = 'none';
+    this.interviewStarted = false;
+    this.questionCount = 0;
+    this.updateProgress(0);
+
+    const roleCards = document.getElementById('roleCards');
+    const technicalSection = document.getElementById('technicalSection');
+    const businessSection = document.getElementById('businessSection');
+
+    if (roleCards) roleCards.style.display = 'grid';
+    if (technicalSection) technicalSection.style.display = 'block';
+    if (businessSection) businessSection.style.display = 'block';
+
+    this.container.style.display = 'none';
+    if (this.makeInterviewBtn) this.makeInterviewBtn.style.display = 'inline-block';
+
+  } catch (error) {
+    console.error('Reset error:', error);
+    this.updateStatus('Error resetting. Please refresh.', 'ready');
+  }
+}
+
+
+  viewSummary() {
+    window.open('/summary', '_blank');
+  }
+}
+// Initialize the dashboard when page loads
+document.addEventListener('DOMContentLoaded', () => {
+  new InterviewDashboard();
+});
+
+// Handle window resize for responsive layout
+window.addEventListener('resize', () => {
+  const container = document.getElementById('interviewContainer');
+  if (container.style.display !== 'none') {
+    container.style.display = window.innerWidth >= 768 ? 'grid' : 'flex';
+  }
+});
+  </script>
+  <footer style="
+  background: linear-gradient(135deg, #0f2027, #203a43, #becaff);
+  color: #fff;
+  text-align: center;
+  padding: 6px;
+  font-size: 14px;
+  position: fixed;
+  bottom: 0;
+  left: 0; /* ✅ add this */
+  width: 100%;
+  box-shadow: 0 -2px 5px rgba(0,0,0,0.2);
+">
+  Developed by Chirag Kapoor &copy; 2025. All rights reserved.
+</footer>
+
+ 
+
+
+
+</body>
+</html>

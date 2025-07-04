@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Interview Summary</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #080c1f, #9329ff);
+      color: #fff;
+      padding: 30px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 2rem;
+    }
+
+    .summary-container {
+      max-width: 800px;
+      margin: auto;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 20px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .qa-pair {
+      background: #ffffff11;
+      margin-bottom: 15px;
+      padding: 15px;
+      border-radius: 10px;
+    }
+
+    .qa-pair h3 {
+      color: #ffd700;
+      margin-bottom: 10px;
+      font-size: 1rem;
+    }
+
+    .qa-pair p {
+      color: #ffffff;
+      font-size: 0.95rem;
+      margin: 5px 0;
+      line-height: 1.4;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 0.85rem;
+      color: #ccc;
+    }
+
+    .footer a {
+      color: #fff;
+      text-decoration: underline;
+    }
+
+    /* ✅ Responsive Styles */
+    @media (max-width: 600px) {
+      body {
+        padding: 20px 15px;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      .qa-pair h3 {
+        font-size: 0.95rem;
+      }
+
+      .qa-pair p {
+        font-size: 0.9rem;
+      }
+
+      .summary-container {
+        padding: 15px;
+      }
+
+      .footer {
+        font-size: 0.75rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>📋 Interview Summary</h1>
+  <div class="summary-container">
+    {% for item in answers %}
+    <div class="qa-pair">
+      <h3>Q: {{ item.question }}</h3>
+      <p><strong>👤 You:</strong> {{ item.answer }}</p>
+      <p><strong>🤖 AI Suggestion:</strong> {{ item.ideal }}</p>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="footer">
+    <p>Developed by Chirag Kapoor &copy; 2025</p>
+    <p><a href="/dashboard">Back to Dashboard</a></p>
+  </div>
+
+</body>
+</html>
